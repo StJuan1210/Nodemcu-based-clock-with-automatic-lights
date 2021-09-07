@@ -9,7 +9,7 @@ Circuit diagram(table) is below the video
 
 https://user-images.githubusercontent.com/86282256/130570172-d3131b82-4762-4446-8a79-48a260ff4859.mp4
 
-![image](https://user-images.githubusercontent.com/86282256/130780877-12ad87c8-b52b-4976-913b-e224e04af3dc.png)
+![image](https://user-images.githubusercontent.com/86282256/132282694-3acdc04e-8193-4aa5-b7a8-0e761b869f92.png)
 
 Circuit:
 |Nodemcu        | LED Strip     | OLED  |
