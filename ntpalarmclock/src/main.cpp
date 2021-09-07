@@ -23,7 +23,7 @@ int r,g,b;
 void static1(int, int, int,int);
 AsyncWebServer server(80);
 CRGB leds1[NUM_LEDS1];
-void alarmcl();
+void alarmcl(int,int,int,int);
 int hr1, minut1;
 String outputStateValue = "null";
 const char *ssid     = "Mattackal 2.4";
@@ -31,6 +31,10 @@ const char *password = "burka123";
 const char* PARAM_INPUT_1 = "Hour";
 const char* PARAM_INPUT_2 = "Minute";
 const char* PARAM_INPUT_3 = "state";
+const char* PARAM_INPUT_4 = "R";
+const char* PARAM_INPUT_5 = "G";
+const char* PARAM_INPUT_6 = "B";
+const char* PARAM_INPUT_7 = "bright";
 
 const long utcOffsetInSeconds = 19800;
 int lon = 0;
@@ -74,7 +78,7 @@ const char index_html[] PROGMEM = R"rawliteral(
   </script></head><body>
   <h2>Set The Alarm</h2>
   <form action="/get" target="hidden-form">
-    Hour: <input type="number" name="Hour"style="background-color:white; 
+    Hour (current value %Hour%): <input type="number" name="Hour"style="background-color:white; 
               border: solid 1px #6E6E6E;
               height: 20px; 
               font-size:18px; 
@@ -83,7 +87,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <input type="submit"  value="Submit" onclick="submitMessage()">
   </form><br>
   <form action="/get" target="hidden-form">
-    Minute: <input type="number" name="Minute"style="background-color:white; 
+    Minute (current value %Minute%): <input type="number" name="Minute"style="background-color:white; 
               border: solid 1px #6E6E6E;
               height: 20px; 
               font-size:18px; 
@@ -99,6 +103,42 @@ const char index_html[] PROGMEM = R"rawliteral(
               font-size:18px; 
               color:#bbb" 
               placeholder="1 = on,0 = off">
+    <input type="submit"  value="Submit" onclick="submitMessage()">
+  </form><br>
+  <form action="/get" target="hidden-form">
+    Red (current value %R%): <input type="number"  name="R"style="background-color:white; 
+              border: solid 1px #6E6E6E;
+              height: 20px; 
+              font-size:18px; 
+              color:#bbb" 
+              placeholder="0-255">
+    <input type="submit"  value="Submit" onclick="submitMessage()">
+  </form><br>
+  <form action="/get" target="hidden-form">
+    Green (current value %G%): <input type="number"  name="G"style="background-color:white; 
+              border: solid 1px #6E6E6E;
+              height: 20px; 
+              font-size:18px; 
+              color:#bbb" 
+              placeholder="0-255">
+    <input type="submit"  value="Submit" onclick="submitMessage()">
+  </form><br>
+  <form action="/get" target="hidden-form">
+    Blue (current value %B%): <input type="number"  name="B"style="background-color:white; 
+              border: solid 1px #6E6E6E;
+              height: 20px; 
+              font-size:18px; 
+              color:#bbb" 
+              placeholder="0-255">
+    <input type="submit"  value="Submit" onclick="submitMessage()">
+  </form><br>
+  <form action="/get" target="hidden-form">
+    Brightness(current value %bright%): <input type="number"  name="bright"style="background-color:white; 
+              border: solid 1px #6E6E6E;
+              height: 20px; 
+              font-size:18px; 
+              color:#bbb" 
+              placeholder="0-255">
     <input type="submit"  value="Submit" onclick="submitMessage()">
   </form><br>
   <iframe style="display:none" name="hidden-form"></iframe>
@@ -139,14 +179,26 @@ void writeFile(fs::FS &fs, const char * path, const char * message){
 // Replaces placeholder with stored values
 String processor(const String& var){
   //Serial.println(var);
-  if(var == "inputString"){
+  if(var == "Hour"){
     return readFile(SPIFFS, "/Hour.txt");
   }
-  else if(var == "inputInt"){
+  else if(var == "Minute"){
     return readFile(SPIFFS, "/Minute.txt");
   }
   else if(var == "state"){
     return readFile(SPIFFS, "/state.txt");
+  }
+  else if(var == "R"){
+    return readFile(SPIFFS, "/R.txt");
+  }
+  else if(var == "G"){
+    return readFile(SPIFFS, "/G.txt");
+  }
+  else if(var == "B"){
+    return readFile(SPIFFS, "/B.txt");
+  }
+  else if(var == "bright"){
+    return readFile(SPIFFS, "/bright.txt");
   }
   return String();
 }
@@ -189,6 +241,22 @@ void setup(){
       inputMessage = request->getParam(PARAM_INPUT_3)->value();
       lon = 1;
     }
+    else if (request->hasParam(PARAM_INPUT_4)) {
+      inputMessage = request->getParam(PARAM_INPUT_4)->value();
+      writeFile(SPIFFS, "/R.txt", inputMessage.c_str());
+    }
+    else if (request->hasParam(PARAM_INPUT_5)) {
+      inputMessage = request->getParam(PARAM_INPUT_5)->value();
+      writeFile(SPIFFS, "/G.txt", inputMessage.c_str());
+    }
+    else if (request->hasParam(PARAM_INPUT_6)) {
+      inputMessage = request->getParam(PARAM_INPUT_6)->value();
+      writeFile(SPIFFS, "/B.txt", inputMessage.c_str());
+    }
+    else if (request->hasParam(PARAM_INPUT_7)) {
+      inputMessage = request->getParam(PARAM_INPUT_7)->value();
+      writeFile(SPIFFS, "/bright.txt", inputMessage.c_str());
+    }
     else {
       inputMessage = "No message sent";
     }
@@ -202,10 +270,15 @@ void setup(){
 void loop() {  
   timeClient.update();
   int i = 0;
+  int r1=0,g1=0,b1=0,bright=0;
   int Hour1 = readFile(SPIFFS, "/Hour.txt").toInt();
   int Minute1 = readFile(SPIFFS, "/Minute.txt").toInt();
+  r1 = readFile(SPIFFS, "/R.txt").toInt();
+  g1 = readFile(SPIFFS, "/G.txt").toInt();
+  b1 = readFile(SPIFFS, "/B.txt").toInt();
+  bright = readFile(SPIFFS, "/bright.txt").toInt();
   if(timeClient.getHours()==Hour1 && timeClient.getMinutes()==Minute1){
-  alarmcl();}
+  alarmcl(r1,g1,b1,bright);}
   else{
   static1(0, 0, 0 ,0);
   FastLED.show();
@@ -229,7 +302,7 @@ void loop() {
   delay(2000);
   display.clearDisplay();
   if(lon == 1){
-    static1(150, 150, 150 ,150);
+    static1(r1, g1, b1 ,bright);
     FastLED.show();
     delay(10000);
     lon=0;
@@ -246,7 +319,7 @@ void static1(int r, int g, int b,int brightness)
   }
   FastLED.show();
 }
-void alarmcl(){
+void alarmcl(int a,int b, int c, int d){
   timeClient.update();
   Serial.print(daysOfTheWeek[timeClient.getDay()]);
   Serial.print(", ");
@@ -256,7 +329,7 @@ void alarmcl(){
   Serial.print(":");
   Serial.println(timeClient.getSeconds());
   //Serial.println(timeClient.getFormattedTime());
-  static1(150, 150, 150 ,150);
+  static1(a, b, c ,d);
   FastLED.show();
 
 }
