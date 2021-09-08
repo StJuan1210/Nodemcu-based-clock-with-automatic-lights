@@ -16,6 +16,6 @@ Circuit:
 
 
 https://user-images.githubusercontent.com/86282256/130570172-d3131b82-4762-4446-8a79-48a260ff4859.mp4
+![2021-09-08-17-29-192 168 2 157](https://user-images.githubusercontent.com/86282256/132505518-48a54842-4da6-4508-b885-f34fdc8a75b5.png)
 
-![image](https://user-images.githubusercontent.com/86282256/132282694-3acdc04e-8193-4aa5-b7a8-0e761b869f92.png)
 
