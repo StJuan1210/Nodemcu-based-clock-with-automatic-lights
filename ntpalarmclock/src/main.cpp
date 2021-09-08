@@ -49,25 +49,52 @@ const char index_html[] PROGMEM = R"rawliteral(
   <title>ESP Alarm Clock</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap');
-    html {font-family: 'Poppins',sans-serif; display: inline-block; text-align: center; background-color:#D6AEAE;}
-    h2 {font-family: 'Poppins',sans-serif;font-size: 3.0rem;color: #241332;}
-    p {font-family: 'Poppins',sans-serif;font-size: 3.0rem;color: #ffffff;}
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono&display=swap');
+    html {font-family: 'Space Mono',monospace; 
+          display: inline-block; 
+          text-align: center; 
+          background: #000000;
+          background: -webkit-gradient(linear, left , right, from(#3feee6), to(#fc4445));
+          background: -webkit-linear-gradient(left, #3feee6, #fc4445);
+          background: -moz-linear-gradient(left, #3feee6, #fc4445);
+          background: -ms-linear-gradient(left, #3feee6, #fc4445);
+          background: -o-linear-gradient(left, #3feee6, #fc4445);
+        }
+    h1 {font-family: 'Space Mono',monospace;
+        font-size: 3.0rem;
+        color: #000000;
+      }
+    h2 {font-family: 'Space Mono',monospace;
+        font-size: 2.0rem;
+        color: #000000;
+      }
+    h3 {font-family: 'Space Mono',monospace;
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #000000;
+      }
     input[type = submit] {
             background-color: rgb(0, 0, 0);
             border: none;
             text-decoration: none;
             color: #ffffff;
             padding: 8px 8px;
-            margin: 8px 8px;
+            margin: 8px 1px;
             cursor: pointer;
-            font-family: 'Poppins',sans-serif;
+            font-family: 'Space Mono',monospace;
          }
-    input[type=number]::-webkit-inner-spin-button {
+    input[type=number]::-webkit-inner-spin-button 
+                          {
                             color: #ffffff;
-                            opacity: 1;
-    }
-    body {max-width: 600px; margin:0px auto; padding-bottom: 25px;}
+                            opacity: 1;                         
+                          }
+    body {max-width: 1300px; 
+          margin:0px auto; 
+          padding-bottom: 25px;
+         }
+    form {
+        margin-bottom: 0;
+         }
   </style>
   
   <script>
@@ -75,28 +102,31 @@ const char index_html[] PROGMEM = R"rawliteral(
       alert("Saved value to memory);
       setTimeout(function(){ document.location.reload(false); }, 500);   
     }
+    
   </script></head><body>
-  <h2>Set The Alarm</h2>
-  <form action="/get" target="hidden-form">
-    Hour (current value %Hour%): <input type="number" name="Hour"style="background-color:white; 
+  <h1>Set The Alarm</h1>
+  <h2>Current: %Hour%:%Minute%</h2>
+  <h3><form action="/get" target="hidden-form">
+    Hour: <input type="number" name="Hour"style="background-color:white; 
               border: solid 1px #6E6E6E;
               height: 20px; 
               font-size:18px; 
-              color:#bbb" 
-              placeholder="Hour" >
+              color:#bbb;" 
+              placeholder="Hour"; >
     <input type="submit"  value="Submit" onclick="submitMessage()">
   </form><br>
   <form action="/get" target="hidden-form">
-    Minute (current value %Minute%): <input type="number" name="Minute"style="background-color:white; 
+    Minute: <input type="number" name="Minute"style="background-color:white; 
               border: solid 1px #6E6E6E;
               height: 20px; 
               font-size:18px; 
               color:#bbb" 
               placeholder="Minute">
     <input type="submit"   value="Submit" onclick="submitMessage()">
-  </form><br>
-  <h2>Light Control</h2>
-  <form action="/get" target="hidden-form">
+  </form><br></h3>
+  <h1>Light Control</h1>
+  <h2>Color: (%R%,%G%,%B%,%bright%)</h2>
+  <h3><form action="/get" target="hidden-form">
     State: <input type="number"  name="state"style="background-color:white; 
               border: solid 1px #6E6E6E;
               height: 20px; 
@@ -106,7 +136,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <input type="submit"  value="Submit" onclick="submitMessage()">
   </form><br>
   <form action="/get" target="hidden-form">
-    Red (current value %R%): <input type="number"  name="R"style="background-color:white; 
+    Red: <input type="number"  name="R"style="background-color:white; 
               border: solid 1px #6E6E6E;
               height: 20px; 
               font-size:18px; 
@@ -115,7 +145,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <input type="submit"  value="Submit" onclick="submitMessage()">
   </form><br>
   <form action="/get" target="hidden-form">
-    Green (current value %G%): <input type="number"  name="G"style="background-color:white; 
+    Green: <input type="number"  name="G"style="background-color:white; 
               border: solid 1px #6E6E6E;
               height: 20px; 
               font-size:18px; 
@@ -124,7 +154,7 @@ const char index_html[] PROGMEM = R"rawliteral(
     <input type="submit"  value="Submit" onclick="submitMessage()">
   </form><br>
   <form action="/get" target="hidden-form">
-    Blue (current value %B%): <input type="number"  name="B"style="background-color:white; 
+    Blue: <input type="number"  name="B"style="background-color:white; 
               border: solid 1px #6E6E6E;
               height: 20px; 
               font-size:18px; 
@@ -133,14 +163,14 @@ const char index_html[] PROGMEM = R"rawliteral(
     <input type="submit"  value="Submit" onclick="submitMessage()">
   </form><br>
   <form action="/get" target="hidden-form">
-    Brightness(current value %bright%): <input type="number"  name="bright"style="background-color:white; 
+    Brightness: <input type="number"  name="bright"style="background-color:white; 
               border: solid 1px #6E6E6E;
               height: 20px; 
               font-size:18px; 
               color:#bbb" 
               placeholder="0-255">
     <input type="submit"  value="Submit" onclick="submitMessage()">
-  </form><br>
+  </form><br></h3>
   <iframe style="display:none" name="hidden-form"></iframe>
 </body></html>)rawliteral";
 
